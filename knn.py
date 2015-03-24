@@ -14,6 +14,7 @@ class Knn:
         self._count = np.zeros(k)
 
     def train(self, X):
+        self.cs = X[0: self.k]
         for t in xrange(50):
             print 'iter', t
             for x in X:

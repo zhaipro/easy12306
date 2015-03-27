@@ -6,7 +6,7 @@ import os
 import time
 
 
-class Knn:
+class KMeans:
     def __init__(self, k):
         self.k = k
         self.cs = np.zeros((k, 1083))
@@ -50,7 +50,7 @@ def get_img_as_vector(fn):
     (retval, dst) = cv2.threshold(im, 128, 1, cv2.THRESH_BINARY_INV)
     return dst.reshape(dst.size)
 
-k = Knn(1600)    # 分1000个类别
+k = KMeans(1600)    # 分1000个类别
 fns = os.listdir('ocr')
 train_fns = fns[0: 16000]
 test_fns = fns[16000: ]

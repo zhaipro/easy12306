@@ -1,31 +1,30 @@
-# -*- coding: cp936 -*-
-# ¹¦ÄÜ£º×¥È¡ÑéÖ¤Âë
-# ²¢´æ·Åµ½imgÄ¿Â¼ÏÂ
-# ÎÄ¼şÃûÎªÍ¼ÏñµÄMD5
-import urllib2
+#! env python3
+# coding: utf-8
+# åŠŸèƒ½ï¼šæŠ“å–éªŒè¯ç 
+# å¹¶å­˜æ”¾åˆ°imgç›®å½•ä¸‹
+# æ–‡ä»¶åä¸ºå›¾åƒçš„MD5
 import hashlib
-import time
-# hack CERTIFICATE_VERIFY_FAILED
-# https://github.com/mtschirs/quizduellapi/issues/2
-import ssl
-if hasattr(ssl, '_create_unverified_context'):
-    ssl._create_default_https_context = ssl._create_unverified_context
+
+import requests
+
+import utils
+
 
 def download_img():
-    pic_url = 'https://kyfw.12306.cn/otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand&0.21191171556711197'
-    resp = urllib2.urlopen(pic_url)
-    raw = resp.read()
-    fn = hashlib.md5(raw).hexdigest()
-    with open("img/%s.jpg" % fn, 'wb') as fp:
-        fp.write(raw)
+    url = 'https://kyfw.12306.cn/otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand'
+    response = requests.get(url)
+    fn = hashlib.md5(response.content).hexdigest()
+    with open(f'img/{fn}.jpg', 'wb') as fp:
+        fp.write(response.content)
+
 
 if __name__ == '__main__':
+    utils.mkdir('img')
     i = 0
     while True:
         try:
-#            time.sleep(1)  # ÕâÀï¸ù±¾²»ĞèÒªµÈ´ı
             download_img()
             i += 1
-            print i
+            print(i)
         except:
-            print 'error'
+            print('error')

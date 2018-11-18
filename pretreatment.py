@@ -1,16 +1,19 @@
-# -*- coding: cp936 -*-
-# ¹¦ÄÜ£º¶ÔÍ¼Ïñ½øĞĞÔ¤´¦Àí£¬½«ÎÄ×Ö²¿·Öµ¥¶ÀÌáÈ¡³öÀ´
-# ²¢´æ·Åµ½ocrÄ¿Â¼ÏÂ
-# ÎÄ¼şÃûÎªÔ­ÑéÖ¤ÂëÎÄ¼şµÄÎÄ¼şÃû
+#! env python
+# coding: utf-8
+# åŠŸèƒ½ï¼šå¯¹å›¾åƒè¿›è¡Œé¢„å¤„ç†ï¼Œå°†æ–‡å­—éƒ¨åˆ†å•ç‹¬æå–å‡ºæ¥
+# å¹¶å­˜æ”¾åˆ°ocrç›®å½•ä¸‹
+# æ–‡ä»¶åä¸ºåŸéªŒè¯ç æ–‡ä»¶çš„æ–‡ä»¶å
 import cv2
 import os
+
+import utils
 
 
 def read_img(fn):
     '''
-    µÃµ½ÑéÖ¤ÂëÍêÕûÍ¼Ïñ
-    :param fn:Í¼ÏñÎÄ¼şÂ·¾¶
-    :return:Í¼Ïñ¶ÔÏó
+    å¾—åˆ°éªŒè¯ç å®Œæ•´å›¾åƒ
+    :param fn:å›¾åƒæ–‡ä»¶è·¯å¾„
+    :return:å›¾åƒå¯¹è±¡
     '''
     return cv2.imread(fn)
 
@@ -21,14 +24,14 @@ def write_img(im, fn):
 
 def get_text_img(im):
     '''
-    µÃµ½Í¼ÏñÖĞµÄÎÄ±¾²¿·Ö
+    å¾—åˆ°å›¾åƒä¸­çš„æ–‡æœ¬éƒ¨åˆ†
     '''
     return im[3:22, 127:184]
 
 
 def binarize(im):
     '''
-    ¶şÖµ»¯Í¼Ïñ
+    äºŒå€¼åŒ–å›¾åƒ
     '''
     gray = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
     (retval, dst) = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
@@ -36,16 +39,16 @@ def binarize(im):
 
 
 def show_img(im):
-    print im.ndim, im.dtype
+    print(im.ndim, im.dtype)
     cv2.imshow("image", im)
     cv2.waitKey(0)
 
 
 if __name__ == '__main__':
-    img_names = os.listdir('img')
-    for img_name in img_names:
+    utils.mkdir('ocr')
+    for img_name in os.listdir('img'):
         im = read_img(os.path.join('img', img_name))
         im = get_text_img(im)
         im = binarize(im)
-#        show_img(im)
+        # show_img(im)
         write_img(im, os.path.join('ocr', img_name))

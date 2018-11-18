@@ -1,8 +1,11 @@
-# -*- coding: cp936 -*-
-# ¹¦ÄÜ£º¶ÔÎÄ×Ö²¿·ÖÊ¹ÓÃk-meansËã·¨½øÐÐ¾ÛÀà
-import cv2
+#! env python
+# coding: utf-8
+# åŠŸèƒ½ï¼šå¯¹æ–‡å­—éƒ¨åˆ†ä½¿ç”¨k-meansç®—æ³•è¿›è¡Œèšç±»
 import os
 import time
+import sys
+
+import cv2
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.externals import joblib
@@ -11,34 +14,35 @@ from sklearn.externals import joblib
 def get_img_as_vector(fn):
     im = cv2.imread(fn)
     im = im[:, :, 0]
-    (retval, dst) = cv2.threshold(im, 128, 1, cv2.THRESH_BINARY_INV)
+    retval, dst = cv2.threshold(im, 128, 1, cv2.THRESH_BINARY_INV)
     return dst.reshape(dst.size)
 
 
 def main():
-    # ¶ÁÈ¡ÑµÁ·ÓÃÊý¾Ý
-    print 'Start: read data', time.clock()
+    # è¯»å–è®­ç»ƒç”¨æ•°æ®
+    print('Start: read data', time.process_time())
     fns = os.listdir('ocr')
     X = [get_img_as_vector(os.path.join('ocr', fn)) for fn in fns]
-    print 'Samples', len(X), 'Feature', len(X[0])
-    #PCA
-    print 'Start: PCA', time.clock()
+    print('Samples', len(X), 'Feature', len(X[0]))
+    # PCA
+    print('Start: PCA', time.process_time())
     pca = PCA(n_components=0.99)
     pca.fit(X)
     X = pca.transform(X)
-    print 'Samples', len(X), 'Feature', len(X[0])
-    # ÑµÁ·
-    print 'Start: train', time.clock()
-    n_clusters = 2000    # ¾ÛÀàÖÐÐÄ¸öÊý
+    print('Samples', len(X), 'Feature', len(X[0]))
+    sys.stdout.flush()
+    # è®­ç»ƒ
+    print('Start: train', time.process_time())
+    n_clusters = 2000    # èšç±»ä¸­å¿ƒä¸ªæ•°
     estimator = KMeans(n_clusters, n_init=1, max_iter=20, verbose=True)
     estimator.fit(X)
-    print 'Clusters', estimator.n_clusters, 'Iter', estimator.n_iter_
-    print 'Start: classify', time.clock()
+    print('Clusters', estimator.n_clusters, 'Iter', estimator.n_iter_)
+    print('Start: classify', time.process_time())
     fp = open('result11.txt', 'w')
     for fn, c in zip(fns, estimator.labels_):
-        print >> fp, fn, c
+        print(fn, c, file=fp)
     fp.close()
-    print 'Start: save model', time.clock()
+    print('Start: save model', time.process_time())
     joblib.dump(estimator, 'k-means11.pkl')
 
 if __name__ == '__main__':

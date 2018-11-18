@@ -3,52 +3,57 @@
 # 功能：对图像进行预处理，将文字部分单独提取出来
 # 并存放到ocr目录下
 # 文件名为原验证码文件的文件名
-import cv2
+import hashlib
 import os
+import pathlib
 
-import utils
-
-
-def read_img(fn):
-    '''
-    得到验证码完整图像
-    :param fn:图像文件路径
-    :return:图像对象
-    '''
-    return cv2.imread(fn)
+import cv2
+import numpy as np
+import requests
 
 
-def write_img(im, fn):
-    cv2.imwrite(fn, im)
+PATH = 'imgs'
 
 
-def get_text_img(im):
-    '''
-    得到图像中的文本部分
-    '''
-    return im[3:22, 127:184]
+def download_image():
+    # 抓取验证码
+    # 存放到指定path下
+    # 文件名为图像的MD5
+    url = 'https://kyfw.12306.cn/otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand'
+    r = requests.get(url)
+    fn = hashlib.md5(r.content).hexdigest()
+    with open(f'{PATH}/{fn}.jpg', 'wb') as fp:
+        fp.write(r.content)
 
 
-def binarize(im):
-    '''
-    二值化图像
-    '''
-    gray = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
-    (retval, dst) = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
-    return dst
+def download_images():
+    pathlib.Path(PATH).mkdir(exist_ok=True)
+    for idx in range(40000):
+        download_image()
+        print(idx)
 
 
-def show_img(im):
-    print(im.ndim, im.dtype)
-    cv2.imshow("image", im)
-    cv2.waitKey(0)
+def pretreat():
+    if not os.path.isdir(PATH):
+        download_images()
+    imgs = []
+    for img in os.listdir(PATH):
+        img = os.path.join(PATH, img)
+        img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
+        # 得到图像中的文本部分
+        img = img[3:22, 120:177]
+        imgs.append(img)
+    return imgs
+
+
+def load_data(path='data.npy'):
+    if not os.path.isfile(path):
+        imgs = pretreat()
+        np.save(path, imgs)
+    return np.load(path)
 
 
 if __name__ == '__main__':
-    utils.mkdir('ocr')
-    for img_name in os.listdir('img'):
-        im = read_img(os.path.join('img', img_name))
-        im = get_text_img(im)
-        im = binarize(im)
-        # show_img(im)
-        write_img(im, os.path.join('ocr', img_name))
+    imgs = load_data()
+    print(imgs.shape)
+    cv2.imwrite('temp.jpg', imgs[0])

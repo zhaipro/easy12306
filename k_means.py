@@ -1,34 +1,30 @@
 #! env python
 # coding: utf-8
 # 功能：对文字部分使用k-means算法进行聚类
-import os
-import time
 import sys
+import time
 
-import cv2
+import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.externals import joblib
 
-
-def get_img_as_vector(fn):
-    im = cv2.imread(fn)
-    im = im[:, :, 0]
-    retval, dst = cv2.threshold(im, 128, 1, cv2.THRESH_BINARY_INV)
-    return dst.reshape(dst.size)
+import pretreatment
 
 
 def main():
     # 读取训练用数据
     print('Start: read data', time.process_time())
-    fns = os.listdir('ocr')
-    X = [get_img_as_vector(os.path.join('ocr', fn)) for fn in fns]
+    X = pretreatment.load_data()    # NOQA
+    c, h, w = X.shape
+    X = X.reshape((c, h * w))       # NOQA
+    X = X / 255.0                   # NOQA
     print('Samples', len(X), 'Feature', len(X[0]))
     # PCA
     print('Start: PCA', time.process_time())
     pca = PCA(n_components=0.99)
     pca.fit(X)
-    X = pca.transform(X)
+    X = pca.transform(X)            # NOQA
     print('Samples', len(X), 'Feature', len(X[0]))
     sys.stdout.flush()
     # 训练
@@ -38,12 +34,10 @@ def main():
     estimator.fit(X)
     print('Clusters', estimator.n_clusters, 'Iter', estimator.n_iter_)
     print('Start: classify', time.process_time())
-    fp = open('result11.txt', 'w')
-    for fn, c in zip(fns, estimator.labels_):
-        print(fn, c, file=fp)
-    fp.close()
+    np.save('labels.npy', estimator.labels_)
     print('Start: save model', time.process_time())
-    joblib.dump(estimator, 'k-means11.pkl')
+    joblib.dump(estimator, 'k-means.pkl')
+
 
 if __name__ == '__main__':
     main()

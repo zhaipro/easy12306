@@ -38,11 +38,14 @@ def pretreat():
         download_images()
     imgs = []
     for img in os.listdir(PATH):
-        img = os.path.join(PATH, img)
-        img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-        # 得到图像中的文本部分
-        img = img[3:22, 120:177]
-        imgs.append(img)
+        try:
+            img = os.path.join(PATH, img)
+            img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
+            # 得到图像中的文本部分
+            img = img[3:22, 120:177]
+            imgs.append(img)
+        except:
+            pass
     return imgs
 
 

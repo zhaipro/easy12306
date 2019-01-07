@@ -33,6 +33,30 @@ def download_images():
         print(idx)
 
 
+def get_text(img):
+    # 得到图像中的文本部分
+    return img[3:22, 120:177]
+
+
+def avhash(im):
+    im = cv2.resize(im, (8, 8))
+    avg = im.mean()
+    _, im = cv2.threshold(im, avg, 1, cv2.THRESH_BINARY)
+    im = im.reshape(-1)
+    im = np.packbits(im)
+    return im
+
+
+def get_imgs(img):
+    interval = 5
+    length = 67
+    imgs = []
+    for x in range(40, img.shape[0] - length, interval + length):
+        for y in range(interval, img.shape[1] - length, interval + length):
+            imgs.append(avhash(img[x:x + length, y:y + length]))
+    return imgs
+
+
 def pretreat():
     if not os.path.isdir(PATH):
         download_images()
@@ -40,9 +64,7 @@ def pretreat():
     for img in os.listdir(PATH):
         img = os.path.join(PATH, img)
         img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-        # 得到图像中的文本部分
-        img = img[3:22, 120:177]
-        imgs.append(img)
+        imgs.append(get_text(img))
     return imgs
 
 

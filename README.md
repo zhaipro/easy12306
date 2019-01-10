@@ -10,3 +10,5 @@
 https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
 
 `python main.py <img.jpg>`
+
+我把设计思路写在维基中了：https://github.com/zhaipro/easy12306/wiki

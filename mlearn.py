@@ -17,8 +17,8 @@ def main():
     from keras import models
     from keras import layers
     (train_x, train_y), (test_x, test_y) = load_data()
-    _, train_x = cv2.threshold(train_x, 220, 1, cv2.THRESH_BINARY)
-    _, test_x = cv2.threshold(test_x, 220, 1, cv2.THRESH_BINARY)
+    train_x = train_x / 255.0
+    test_x = test_x / 255.0
     _, h, w = train_x.shape
     train_x.shape = (-1, h, w, 1)
     test_x.shape = (-1, h, w, 1)
@@ -28,6 +28,7 @@ def main():
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.MaxPooling2D(),  # 8 -> 6 -> 3
         layers.Flatten(),
+        layers.Dropout(0.5),
         layers.Dense(256, activation='relu'),
         layers.Dense(80, activation='softmax'),
     ])
@@ -54,7 +55,7 @@ def predict():
     from keras import models
     model = models.load_model('model.h5')
     texts = np.load('data.npy')
-    _, texts = cv2.threshold(texts, 220, 1, cv2.THRESH_BINARY)
+    texts = texts / 255.0
     _, h, w = texts.shape
     texts.shape = (-1, h, w, 1)
     labels = model.predict(texts)

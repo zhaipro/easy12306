@@ -13,7 +13,7 @@ def main(fn):
     img = cv2.imread(fn, cv2.IMREAD_GRAYSCALE)
     text = pretreatment.get_text(img)
     imgs = pretreatment.get_imgs(img)
-    _, text = cv2.threshold(text, 220, 1, cv2.THRESH_BINARY)
+    text = text / 255.0
     h, w = text.shape
     text.shape = (1, h, w, 1)
 

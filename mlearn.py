@@ -51,14 +51,19 @@ def main():
     model.save('model.h5')
 
 
-def predict():
+def predict(texts):
     from keras import models
     model = models.load_model('model.h5')
-    texts = np.load('data.npy')
     texts = texts / 255.0
     _, h, w = texts.shape
     texts.shape = (-1, h, w, 1)
     labels = model.predict(texts)
+    return labels
+
+
+def _predict():
+    texts = np.load('data.npy')
+    labels = predict(texts)
     np.save('labels.npy', labels)
 
 
@@ -75,5 +80,5 @@ def show():
 
 if __name__ == '__main__':
     main()
-    predict()
+    _predict()
     show()

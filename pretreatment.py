@@ -60,22 +60,26 @@ def get_imgs(img):
 def pretreat():
     if not os.path.isdir(PATH):
         download_images()
-    imgs = []
+    texts, imgs = [], []
     for img in os.listdir(PATH):
         img = os.path.join(PATH, img)
         img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-        imgs.append(get_text(img))
-    return imgs
+        texts.append(get_text(img))
+        imgs.append(get_imgs(img))
+    return texts, imgs
 
 
-def load_data(path='data.npy'):
+def load_data(path='data.npz'):
     if not os.path.isfile(path):
-        imgs = pretreat()
-        np.save(path, imgs)
-    return np.load(path)
+        texts, imgs = pretreat()
+        np.savez(path, texts=texts, images=imgs)
+    f = np.load(path)
+    return f['texts'], f['images']
 
 
 if __name__ == '__main__':
-    imgs = load_data()
+    texts, imgs = load_data()
+    print(texts.shape)
     print(imgs.shape)
-    cv2.imwrite('temp.jpg', imgs[0])
+    imgs = imgs.reshape(-1, 8)
+    print(np.unique(imgs, axis=0).shape)

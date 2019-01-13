@@ -54,7 +54,9 @@ docs/_build/
 target/
 
 *.jpg
+*.png
 *.npy
 *.txt
 *.npz
 *.pkl
+*.h5

@@ -133,11 +133,8 @@ def main_v2():
     history = model.fit(train_x, train_y, epochs=40, batch_size=10 * 80,
                         validation_data=(test_x, test_y))
     savefig(history)
-    # 保存前，先编译回正式版本
-    model.compile(optimizer='rmsprop',
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    model.save('model.h5')
+    # 保存，并扔掉优化器
+    model.save('model.h5', include_optimizer=False)
 
 
 def predict(texts):

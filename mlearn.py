@@ -36,16 +36,19 @@ def savefig(history, fn='loss.jpg'):
 def main():
     from keras import models
     from keras import layers
+    from keras import optimizers
     (train_x, train_y), (test_x, test_y) = load_data()
     _, h, w, _ = train_x.shape
     model = models.Sequential([
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(h, w, 1)),
-        layers.MaxPooling2D(),  # 19 -> 17 -> 8
-        layers.Conv2D(64, (3, 3), activation='relu'),
-        layers.MaxPooling2D(),  # 8 -> 6 -> 3
-        layers.Flatten(),
-        layers.Dropout(0.5),
-        layers.Dense(256, activation='relu'),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(h, w, 1)),
+        layers.MaxPooling2D(),  # 19 -> 9
+        layers.Conv2D(64, (3, 3), padding='same', activation='relu'),
+        layers.MaxPooling2D(),  # 9 -> 4
+        layers.Conv2D(64, (3, 3), padding='same', activation='relu'),
+        layers.MaxPooling2D(),  # 4 -> 2
+        layers.GlobalAveragePooling2D(),
+        layers.Dropout(0.25),
+        layers.Dense(64, activation='relu'),
         layers.Dense(80, activation='softmax'),
     ])
     model.summary()
@@ -54,6 +57,16 @@ def main():
                   metrics=['accuracy'])
     history = model.fit(train_x, train_y, epochs=30,
                         validation_data=(test_x, test_y))
+    model.compile(optimizer=optimizers.RMSprop(lr=1e-3),
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
+    model.fit(train_x, train_y, epochs=30,
+              validation_data=(test_x, test_y))
+    model.compile(optimizer=optimizers.RMSprop(lr=1e-5),
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
+    model.fit(train_x, train_y, epochs=30,
+              validation_data=(test_x, test_y))
     savefig(history)
     model.save('model.h5')
 

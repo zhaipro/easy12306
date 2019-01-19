@@ -95,9 +95,10 @@ def main_v2():
         layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
         layers.MaxPooling2D(),  # 9 -> 4
         layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
         layers.MaxPooling2D(),  # 4 -> 2
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        layers.MaxPooling2D(),  # 2 -> 1
         layers.GlobalAveragePooling2D(),
         layers.Dropout(0.25),
         layers.Dense(64, activation='relu'),

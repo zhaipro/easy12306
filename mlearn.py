@@ -86,26 +86,21 @@ def acc(y_true, y_pred):
 def main_v2():
     from keras import models
     from keras import layers
-    from keras import optimizers
+    from keras.callbacks import ReduceLROnPlateau
     (train_x, train_y), (test_x, test_y) = load_data()
     _, h, w, _ = train_x.shape
     model = models.Sequential([
-        layers.Conv2D(32, (3, 3), activation='relu', padding='same', input_shape=(h, w, 1)),
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(h, w, 1)),
         layers.MaxPooling2D(),  # 19 -> 9
         layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
         layers.MaxPooling2D(),  # 9 -> 4
-        layers.Conv2D(128, (3, 3), activation='relu'),
-        layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-        layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
         layers.MaxPooling2D(),  # 4 -> 2
-        layers.Flatten(),
-        layers.Dropout(0.1),
-        layers.Dense(256, activation='relu'),
+        layers.GlobalAveragePooling2D(),
+        layers.Dropout(0.25),
+        layers.Dense(64, activation='relu'),
         layers.Dense(80, activation='softmax'),
     ])
     model.summary()
@@ -115,16 +110,13 @@ def main_v2():
     model.fit(train_x, train_y, epochs=10,
               validation_data=(test_x, test_y))
     (train_x, train_y), (test_x, test_y) = load_data_v2()
-    model.compile(optimizer=optimizers.RMSprop(lr=1e-4),
+    model.compile(optimizer='rmsprop',
                   loss='categorical_hinge',
                   metrics=[acc])
-    model.fit(train_x, train_y, epochs=20,
-              validation_data=(test_x, test_y))
-    model.compile(optimizer=optimizers.RMSprop(lr=1e-5),
-                  loss='categorical_hinge',
-                  metrics=[acc])
-    history = model.fit(train_x, train_y, epochs=40, batch_size=10 * 80,
-                        validation_data=(test_x, test_y))
+    reduce_lr = ReduceLROnPlateau(verbose=1)
+    history = model.fit(train_x, train_y, epochs=100,
+                        validation_data=(test_x, test_y),
+                        callbacks=[reduce_lr])
     savefig(history)
     # 保存，并扔掉优化器
     model.save('model.h5', include_optimizer=False)

@@ -18,12 +18,12 @@ def load_data(fn='texts.npz', to=False):
     return (texts[:n], labels[:n]), (texts[n:], labels[n:])
 
 
-def savefig(history, fn='loss.jpg'):
+def savefig(history, fn='loss.jpg', start=2):
     import matplotlib.pyplot as plt
     # 忽略起点
-    loss = history.history['loss'][1:]
-    val_loss = history.history['val_loss'][1:]
-    epochs = list(range(2, len(loss) + 2))
+    loss = history.history['loss'][start - 1:]
+    val_loss = history.history['val_loss'][start - 1:]
+    epochs = list(range(start, len(loss) + start))
     plt.plot(epochs, loss, 'bo', label='Training loss')
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
     plt.title('Training and validation loss')
@@ -36,7 +36,7 @@ def savefig(history, fn='loss.jpg'):
 def main():
     from keras import models
     from keras import layers
-    from keras import optimizers
+    from keras.callbacks import ReduceLROnPlateau
     (train_x, train_y), (test_x, test_y) = load_data()
     _, h, w, _ = train_x.shape
     model = models.Sequential([
@@ -55,19 +55,12 @@ def main():
     model.compile(optimizer='rmsprop',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
-    history = model.fit(train_x, train_y, epochs=30,
-                        validation_data=(test_x, test_y))
-    model.compile(optimizer=optimizers.RMSprop(lr=1e-3),
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    model.fit(train_x, train_y, epochs=30,
-              validation_data=(test_x, test_y))
-    model.compile(optimizer=optimizers.RMSprop(lr=1e-5),
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    model.fit(train_x, train_y, epochs=30,
-              validation_data=(test_x, test_y))
-    savefig(history)
+    # 当标准评估停止提升时，降低学习速率
+    reduce_lr = ReduceLROnPlateau(verbose=1)
+    history = model.fit(train_x, train_y, epochs=100,
+                        validation_data=(test_x, test_y),
+                        callbacks=[reduce_lr])
+    savefig(history, start=10)
     model.save('model.h5')
 
 

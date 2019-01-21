@@ -10,6 +10,7 @@ import pathlib
 import cv2
 import numpy as np
 import requests
+import scipy.fftpack
 
 
 PATH = 'imgs'
@@ -39,10 +40,19 @@ def get_text(img):
 
 
 def avhash(im):
-    im = cv2.resize(im, (8, 8))
+    im = cv2.resize(im, (8, 8), interpolation=cv2.INTER_CUBIC)
     avg = im.mean()
-    _, im = cv2.threshold(im, avg, 1, cv2.THRESH_BINARY)
-    im = im.reshape(-1)
+    im = im > avg
+    im = np.packbits(im)
+    return im
+
+
+def phash(im):
+    im = cv2.resize(im, (32, 32), interpolation=cv2.INTER_CUBIC)
+    im = scipy.fftpack.dct(scipy.fftpack.dct(im, axis=0), axis=1)
+    im = im[:8, :8]
+    med = np.median(im)
+    im = im > med
     im = np.packbits(im)
     return im
 
@@ -53,7 +63,7 @@ def get_imgs(img):
     imgs = []
     for x in range(40, img.shape[0] - length, interval + length):
         for y in range(interval, img.shape[1] - length, interval + length):
-            imgs.append(avhash(img[x:x + length, y:y + length]))
+            imgs.append(phash(img[x:x + length, y:y + length]))
     return imgs
 
 

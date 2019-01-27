@@ -30,4 +30,16 @@ https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
 1 3 31
 ```
 
+具体的编号：https://gist.github.com/zhaipro/97d46ff244f66d17961a5f1ef17b6d8f
+
+识别前所未见的图片
+
+![8](https://user-images.githubusercontent.com/8620842/51799645-a01c7300-225e-11e9-8214-296773112484.jpg)
+
+```
+~$ python3 mlearn_for_image.py 8.jpg
+[0.8991613]  # 可信度
+[0]          # 0 表示的就是打字机
+```
+
 源码很乱，整理中…

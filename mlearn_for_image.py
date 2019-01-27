@@ -1,4 +1,6 @@
 # coding: utf-8
+import sys
+
 import cv2
 import numpy as np
 from keras import models
@@ -31,7 +33,7 @@ def load_data():
     return (train_x, train_y, sample_weight), (test_x, test_y)
 
 
-def main():
+def learn():
     (train_x, train_y, sample_weight), (test_x, test_y) = load_data()
     datagen = ImageDataGenerator(horizontal_flip=True,
                                  vertical_flip=True)
@@ -62,5 +64,19 @@ def main():
     model.save('12306.image.model.h5', include_optimizer=False)
 
 
+def predict(fn):
+    imgs = cv2.imread(fn)
+    imgs = cv2.resize(imgs, (67, 67))
+    imgs = imgs / 255.0
+    imgs.shape = (-1, 67, 67, 3)
+    model = models.load_model('12306.image.model.h5')
+    labels = model.predict(imgs)
+    print(labels.max(axis=1))
+    print(labels.argmax(axis=1))
+
+
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) >= 2:
+        predict(sys.argv[1])
+    else:
+        learn()

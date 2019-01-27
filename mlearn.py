@@ -61,7 +61,7 @@ def main():
                         validation_data=(test_x, test_y),
                         callbacks=[reduce_lr])
     savefig(history, start=10)
-    model.save('model.h5')
+    model.save('model.h5', include_optimizer=False)
 
 
 def load_data_v2():

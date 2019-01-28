@@ -57,13 +57,18 @@ def phash(im):
     return im
 
 
-def get_imgs(img):
+def _get_imgs(img):
     interval = 5
     length = 67
-    imgs = []
     for x in range(40, img.shape[0] - length, interval + length):
         for y in range(interval, img.shape[1] - length, interval + length):
-            imgs.append(phash(img[x:x + length, y:y + length]))
+            yield img[x:x + length, y:y + length]
+
+
+def get_imgs(img):
+    imgs = []
+    for img in _get_imgs(img):
+        imgs.append(phash(img))
     return imgs
 
 

@@ -10,12 +10,16 @@ import pretreatment
 
 def main(fn):
     # 读取并预处理验证码
-    img = cv2.imread(fn, cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread(fn)
     text = pretreatment.get_text(img)
-    imgs = pretreatment.get_imgs(img)
+    text = cv2.cvtColor(text, cv2.COLOR_BGR2GRAY)
+    imgs = np.array(list(pretreatment._get_imgs(img)))
+    imgs = imgs / 255.0
     text = text / 255.0
     h, w = text.shape
     text.shape = (1, h, w, 1)
+    _, h, w, _ = imgs.shape
+    imgs.shape = (-1, h, w, 3)
 
     # 识别文字
     model = models.load_model('model.h5')
@@ -24,18 +28,11 @@ def main(fn):
     print(label)
 
     # 加载图片分类器
-    data = np.load('images.npz')
-    images, labels = data['images'], data['labels']
+    model = models.load_model('12306.image.model.h5')
+    labels = model.predict(imgs)
     labels = labels.argmax(axis=1)
-    for pos, img in enumerate(imgs):
-        try:
-            img.dtype = np.uint64
-            img = img[0]
-            idx = list(images).index(img)
-            label = labels[idx]
-            print(pos // 4, pos % 4, label)
-        except:
-            print('unknown')
+    for pos, label in enumerate(labels):
+        print(pos // 4, pos % 4, label)
 
 
 if __name__ == '__main__':

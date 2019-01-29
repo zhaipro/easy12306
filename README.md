@@ -42,7 +42,15 @@ https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
 [0]          # 0 表示的就是打字机
 ```
 
-在线体验，识别单个图片，可任意尺寸（总之由cv2简单的将其转为指定尺寸）。
+### 在线体验
+
+识别验证码（总之我开发页面的能力极弱）。
+
+http://shell.teachx.cn:12306/
+
+![a](https://user-images.githubusercontent.com/8620842/51885312-e809da00-23c5-11e9-93a3-78d5e8b4ac18.png)
+
+识别单个图片，可任意尺寸（总之由cv2简单的将其转为指定尺寸）。
 
 http://shell.teachx.cn:5000/
 

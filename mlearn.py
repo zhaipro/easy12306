@@ -61,7 +61,7 @@ def main():
                         validation_data=(test_x, test_y),
                         callbacks=[reduce_lr])
     savefig(history, start=10)
-    model.save('model.h5', include_optimizer=False)
+    model.save('model.v1.0.h5', include_optimizer=False)
 
 
 def load_data_v2():
@@ -83,7 +83,23 @@ def acc(y_true, y_pred):
                   K.floatx())
 
 
-def main_v2():
+def main_v19():     # 1.9
+    from keras import models
+    from keras.callbacks import ReduceLROnPlateau
+    (train_x, train_y), (test_x, test_y) = load_data_v2()
+    model = models.load_model('model.v1.0.h5')
+    model.compile(optimizer='RMSprop',
+                  loss='categorical_hinge',
+                  metrics=[acc])
+    reduce_lr = ReduceLROnPlateau(verbose=1)
+    history = model.fit(train_x, train_y, epochs=100,
+                        validation_data=(test_x, test_y),
+                        callbacks=[reduce_lr])
+    savefig(history)
+    model.save('model.v1.9.h5', include_optimizer=False)
+
+
+def main_v20():
     from keras import models
     from keras import layers
     from keras.callbacks import ReduceLROnPlateau
@@ -120,7 +136,7 @@ def main_v2():
                         callbacks=[reduce_lr])
     savefig(history)
     # 保存，并扔掉优化器
-    model.save('model.h5', include_optimizer=False)
+    model.save('model.v2.0.h5', include_optimizer=False)
 
 
 def predict(texts):

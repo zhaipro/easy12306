@@ -9,7 +9,7 @@
 
 https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
 
-`python main.py <img.jpg>`
+`python3 main.py <img.jpg>`
 
 我把设计思路写在维基中了：https://github.com/zhaipro/easy12306/wiki
 
@@ -18,23 +18,24 @@ https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
 ![2](https://user-images.githubusercontent.com/8620842/51320752-d6f2cc00-1a9b-11e9-9d2d-7d1e25ddadc5.jpg)
 
 ```
-~$ python3 main.py 2.jpg
-41      # 要找的东西是41
-0 0 41  # 第一行第一列就是41
-0 1 39
-0 2 73
-0 3 73
-1 0 33
-1 1 41
-1 2 31  # 最后的这两个是同一种东西
-1 3 31
+~$ python3 main.py 2.jpg 2> /dev/null
+电子秤
+风铃        # 要找的是以上两样东西
+0 0 电子秤  # 第一行第一列就是电子秤
+0 1 绿豆
+0 2 蒸笼
+0 3 蒸笼
+1 0 风铃
+1 1 电子秤
+1 2 网球拍
+1 3 网球拍
 ```
-
-具体的编号：https://gist.github.com/zhaipro/97d46ff244f66d17961a5f1ef17b6d8f
 
 识别前所未见的图片
 
 ![8](https://user-images.githubusercontent.com/8620842/51799645-a01c7300-225e-11e9-8214-296773112484.jpg)
+
+具体的编号：[texts.txt](./texts.txt)
 
 ```
 ~$ python3 mlearn_for_image.py 8.jpg
@@ -44,7 +45,7 @@ https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
 
 ### 在线体验
 
-识别验证码（总之我开发页面的能力极弱）。
+识别验证码，暂不识别多标签。
 
 http://shell.teachx.cn:12306/
 

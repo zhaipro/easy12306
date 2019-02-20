@@ -34,9 +34,9 @@ def download_images():
         print(idx)
 
 
-def get_text(img):
+def get_text(img, offset=0):
     # 得到图像中的文本部分
-    return img[3:22, 120:177]
+    return img[3:22, 120 + offset:177 + offset]
 
 
 def avhash(im):

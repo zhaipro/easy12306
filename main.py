@@ -41,7 +41,7 @@ def main(fn):
     else:
         offset = 60
     text = get_text(img, offset=offset)
-    if text.mean() < 1.0:
+    if text.mean() < 0.95:
         label = model.predict(text)
         label = label.argmax()
         text = texts[label]

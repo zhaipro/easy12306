@@ -11,11 +11,19 @@ from keras.callbacks import ReduceLROnPlateau
 from keras.preprocessing.image import ImageDataGenerator
 
 
+def preprocess_input(x):
+    x = x.astype('float32')
+    # 我是用cv2来读取的图片，其已经是BGR格式了
+    mean = [103.939, 116.779, 123.68]
+    x -= mean
+    return x
+
+
 def load_data():
     # 这是统计学专家提供的训练集
     data = np.load('captcha.npz')
     train_x, train_y = data['images'], data['labels']
-    train_x = train_x / 255.0
+    train_x = preprocess_input(train_x)
     # 由于是统计得来的信息，所以在此给定可信度
     sample_weight = train_y.max(axis=1) / np.sqrt(train_y.sum(axis=1))
     sample_weight /= sample_weight.mean()
@@ -29,7 +37,7 @@ def load_data():
     new_test_x = np.empty((n, 67, 67, 3), dtype=np.uint8)
     for idx in range(n):
         new_test_x[idx] = cv2.resize(test_x[idx], (67, 67))
-    test_x = new_test_x / 255.0
+    test_x = preprocess_input(new_test_x)
     return (train_x, train_y, sample_weight), (test_x, test_y)
 
 
@@ -55,7 +63,7 @@ def learn():
                   metrics=['accuracy'])
     model.summary()
     reduce_lr = ReduceLROnPlateau(verbose=1)
-    model.fit_generator(train_generator, epochs=400,
+    model.fit_generator(train_generator, epochs=250,
                         steps_per_epoch=100,
                         validation_data=(test_x[:800], test_y[:800]),
                         callbacks=[reduce_lr])
@@ -67,7 +75,7 @@ def learn():
 def predict(fn):
     imgs = cv2.imread(fn)
     imgs = cv2.resize(imgs, (67, 67))
-    imgs = imgs / 255.0
+    imgs = preprocess_input(imgs)
     imgs.shape = (-1, 67, 67, 3)
     model = models.load_model('12306.image.model.h5')
     labels = model.predict(imgs)

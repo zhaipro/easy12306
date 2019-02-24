@@ -52,9 +52,12 @@ def learn():
         layer.trainable = False
     model = models.Sequential([
         base,
+        layers.BatchNormalization(),
         layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
         layers.GlobalAveragePooling2D(),
+        layers.BatchNormalization(),
         layers.Dense(64, activation='relu'),
+        layers.BatchNormalization(),
         layers.Dropout(0.20),
         layers.Dense(80, activation='softmax')
     ])
@@ -63,7 +66,7 @@ def learn():
                   metrics=['accuracy'])
     model.summary()
     reduce_lr = ReduceLROnPlateau(verbose=1)
-    model.fit_generator(train_generator, epochs=250,
+    model.fit_generator(train_generator, epochs=400,
                         steps_per_epoch=100,
                         validation_data=(test_x[:800], test_y[:800]),
                         callbacks=[reduce_lr])

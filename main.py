@@ -6,6 +6,7 @@ import numpy as np
 from keras import models
 
 import pretreatment
+from mlearn_for_image import preprocess_input
 
 
 def get_text(img, offset=0):
@@ -22,7 +23,7 @@ def main(fn):
     img = cv2.imread(fn)
     text = get_text(img)
     imgs = np.array(list(pretreatment._get_imgs(img)))
-    imgs = imgs / 255.0
+    imgs = preprocess_input(imgs)
 
     # 识别文字
     model = models.load_model('model.h5')

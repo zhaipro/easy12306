@@ -75,19 +75,24 @@ def learn():
     model.save('12306.image.model.h5', include_optimizer=False)
 
 
-def predict(fn):
-    imgs = cv2.imread(fn)
-    imgs = cv2.resize(imgs, (67, 67))
+def predict(imgs):
     imgs = preprocess_input(imgs)
-    imgs.shape = (-1, 67, 67, 3)
     model = models.load_model('12306.image.model.h5')
     labels = model.predict(imgs)
+    return labels
+
+
+def _predict(fn):
+    imgs = cv2.imread(fn)
+    imgs = cv2.resize(imgs, (67, 67))
+    imgs.shape = (-1, 67, 67, 3)
+    labels = predict(imgs)
     print(labels.max(axis=1))
     print(labels.argmax(axis=1))
 
 
 if __name__ == '__main__':
     if len(sys.argv) >= 2:
-        predict(sys.argv[1])
+        _predict(sys.argv[1])
     else:
         learn()

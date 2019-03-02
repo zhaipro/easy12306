@@ -56,7 +56,7 @@ target/
 *.jpg
 *.png
 *.npy
-*.txt
+*.log
 *.npz
 *.pkl
 *.h5

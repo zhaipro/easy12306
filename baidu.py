@@ -47,7 +47,7 @@ def main():
     import sys
     from pretreatment import load_data
     texts = load_data()
-    fp = open('texts.txt', 'w', encoding='utf-8')
+    fp = open('texts.log', 'w', encoding='utf-8')
     for idx, text in enumerate(texts):
         try:
             text = ocr(text)

@@ -32,12 +32,7 @@ def load_data():
     # 这是人工提供的验证集
     data = np.load('captcha.test.npz')
     test_x, test_y = data['images'], data['labels']
-    # resize
-    n = test_x.shape[0]
-    new_test_x = np.empty((n, 67, 67, 3), dtype=np.uint8)
-    for idx in range(n):
-        new_test_x[idx] = cv2.resize(test_x[idx], (67, 67))
-    test_x = preprocess_input(new_test_x)
+    test_x = preprocess_input(test_x)
     return (train_x, train_y, sample_weight), (test_x, test_y)
 
 
@@ -46,8 +41,7 @@ def learn():
     datagen = ImageDataGenerator(horizontal_flip=True,
                                  vertical_flip=True)
     train_generator = datagen.flow(train_x, train_y, sample_weight=sample_weight)
-    _, h, w, c = train_x.shape
-    base = VGG16(weights='imagenet', include_top=False, input_shape=(h, w, c))
+    base = VGG16(weights='imagenet', include_top=False, input_shape=(None, None, 3))
     for layer in base.layers[:-4]:
         layer.trainable = False
     model = models.Sequential([

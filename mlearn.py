@@ -2,11 +2,16 @@
 import pathlib
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
+from keras import backend as K
+from keras import layers
+from keras import models
+from keras.callbacks import ReduceLROnPlateau
+from keras.utils import to_categorical
 
 
 def load_data(fn='texts.npz', to=False):
-    from keras.utils import to_categorical
     data = np.load(fn)
     texts, labels = data['texts'], data['labels']
     texts = texts / 255.0
@@ -19,7 +24,6 @@ def load_data(fn='texts.npz', to=False):
 
 
 def savefig(history, fn='loss.jpg', start=2):
-    import matplotlib.pyplot as plt
     # 忽略起点
     loss = history.history['loss'][start - 1:]
     val_loss = history.history['val_loss'][start - 1:]
@@ -34,13 +38,9 @@ def savefig(history, fn='loss.jpg', start=2):
 
 
 def main():
-    from keras import models
-    from keras import layers
-    from keras.callbacks import ReduceLROnPlateau
     (train_x, train_y), (test_x, test_y) = load_data()
-    _, h, w, _ = train_x.shape
     model = models.Sequential([
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(h, w, 1)),
+        layers.Conv2D(64, (3, 3), padding='same', activation='relu', input_shape=(None, None, 1)),
         layers.MaxPooling2D(),  # 19 -> 9
         layers.Conv2D(64, (3, 3), padding='same', activation='relu'),
         layers.MaxPooling2D(),  # 9 -> 4
@@ -77,15 +77,12 @@ def load_data_v2():
 
 
 def acc(y_true, y_pred):
-    import keras.backend as K
     return K.cast(K.equal(K.argmax(y_true + y_pred, axis=-1),
                           K.argmax(y_pred, axis=-1)),
                   K.floatx())
 
 
 def main_v19():     # 1.9
-    from keras import models
-    from keras.callbacks import ReduceLROnPlateau
     (train_x, train_y), (test_x, test_y) = load_data_v2()
     model = models.load_model('model.v1.0.h5')
     model.compile(optimizer='RMSprop',
@@ -100,13 +97,9 @@ def main_v19():     # 1.9
 
 
 def main_v20():
-    from keras import models
-    from keras import layers
-    from keras.callbacks import ReduceLROnPlateau
     (train_x, train_y), (test_x, test_y) = load_data()
-    _, h, w, _ = train_x.shape
     model = models.Sequential([
-        layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(h, w, 1)),
+        layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(None, None, 1)),
         layers.MaxPooling2D(),  # 19 -> 9
         layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
         layers.MaxPooling2D(),  # 9 -> 4
@@ -140,7 +133,6 @@ def main_v20():
 
 
 def predict(texts):
-    from keras import models
     model = models.load_model('model.h5')
     texts = texts / 255.0
     _, h, w = texts.shape

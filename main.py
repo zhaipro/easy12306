@@ -26,8 +26,9 @@ def main(fn):
     imgs = preprocess_input(imgs)
 
     # 识别文字
-    model = models.load_model('model.h5')
+    model = models.load_model('tmodel.h5')
     label = model.predict(text)
+    print(label)
     label = label.argmax()
     fp = open('texts.txt', encoding='utf-8')
     texts = [text.rstrip('\n') for text in fp]
@@ -49,8 +50,9 @@ def main(fn):
         print(text)
 
     # 加载图片分类器
-    model = models.load_model('12306.image.model.h5')
+    model = models.load_model('imodel.h5')
     labels = model.predict(imgs)
+    print(labels[0])
     labels = labels.argmax(axis=1)
     for pos, label in enumerate(labels):
         print(pos // 4, pos % 4, texts[label])

@@ -23,10 +23,9 @@ def load_data(fn='texts.npz', to=False):
     return (texts[:n], labels[:n]), (texts[n:], labels[n:])
 
 
-def savefig(history, fn='loss.jpg', start=2):
-    # 忽略起点
-    loss = history.history['loss'][start - 1:]
-    val_loss = history.history['val_loss'][start - 1:]
+def savefig(history, start=1, last=30):
+    loss = history.history['loss'][start - 1:last]
+    val_loss = history.history['val_loss'][start - 1:last]
     epochs = list(range(start, len(loss) + start))
     plt.plot(epochs, loss, 'bo', label='Training loss')
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
@@ -34,11 +33,21 @@ def savefig(history, fn='loss.jpg', start=2):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(fn)
+    plt.savefig('loss.jpg')
+
+    acc = history.history['acc'][start - 1:last]
+    val_acc = history.history['val_acc'][start - 1:last]
+    plt.clf()   # 清空图像
+    plt.plot(epochs, acc, 'bo', label='Training acc')
+    plt.plot(epochs, val_acc, 'b', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.savefig('acc.jpg')
 
 
-def main():
-    (train_x, train_y), (test_x, test_y) = load_data()
+def build_model():
     model = models.Sequential([
         layers.Conv2D(64, (3, 3), padding='same', activation='relu', input_shape=(None, None, 1)),
         layers.MaxPooling2D(),  # 19 -> 9
@@ -51,6 +60,12 @@ def main():
         layers.Dense(64, activation='relu'),
         layers.Dense(80, activation='softmax'),
     ])
+    return model
+
+
+def main():
+    (train_x, train_y), (test_x, test_y) = load_data()
+    model = build_model()
     model.summary()
     model.compile(optimizer='rmsprop',
                   loss='sparse_categorical_crossentropy',

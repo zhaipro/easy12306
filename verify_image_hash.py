@@ -48,9 +48,37 @@ def dhash_vertical(im):
     return im
 
 
-def whash(im):
-    pass
-    # 不是说我不做，我是真的看不懂其源码
+def whash(image):
+    """
+    Wavelet Hash computation.
+
+    based on https://www.kaggle.com/c/avito-duplicate-ads-detection/
+    @image must be a PIL instance.
+    """
+    ll_max_level = int(np.log2(min(image.shape)))
+    image_scale = 2**ll_max_level
+
+    level = 3
+    dwt_level = ll_max_level - level
+
+    image = cv2.resize(image, (image_scale, image_scale))
+    pixels = image / 255
+
+    # Remove low level frequency LL(max_ll) if @remove_max_haar_ll using haar filter
+    coeffs = pywt.wavedec2(pixels, 'haar', level = ll_max_level)
+    coeffs[0][:] = 0
+    pixels = pywt.waverec2(coeffs, 'haar')
+
+    # Use LL(K) as freq, where K is log2(@hash_size)
+    coeffs = pywt.wavedec2(pixels, 'haar', level = dwt_level)
+    dwt_low = coeffs[0]
+
+    # Substract median and compute hash
+    med = np.median(dwt_low)
+    diff = dwt_low > med
+
+    diff = np.packbits(diff)
+    return diff
 
 
 def verify(_hash):

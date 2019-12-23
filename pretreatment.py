@@ -11,7 +11,8 @@ import cv2
 import numpy as np
 import requests
 import scipy.fftpack
-
+import json
+import base64
 
 PATH = 'imgs'
 
@@ -20,11 +21,12 @@ def download_image():
     # 抓取验证码
     # 存放到指定path下
     # 文件名为图像的MD5
-    url = 'https://kyfw.12306.cn/otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand'
+    url = 'https://kyfw.12306.cn/passport/captcha/captcha-image64'
     r = requests.get(url)
     fn = hashlib.md5(r.content).hexdigest()
+    img_str = json.loads(r.content)['image']
     with open(f'{PATH}/{fn}.jpg', 'wb') as fp:
-        fp.write(r.content)
+        fp.write(base64.b64decode(img_str))
 
 
 def download_images():
@@ -73,7 +75,7 @@ def get_imgs(img):
 
 
 def pretreat():
-    if not os.path.isdir(PATH):
+    if len(os.listdir(PATH)) < 40000:
         download_images()
     texts, imgs = [], []
     for img in os.listdir(PATH):
@@ -84,7 +86,7 @@ def pretreat():
     return texts, imgs
 
 
-def load_data(path='data.npz'):
+def load_data(path='./data/data.npz'):
     if not os.path.isfile(path):
         texts, imgs = pretreat()
         np.savez(path, texts=texts, images=imgs)

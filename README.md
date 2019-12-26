@@ -7,7 +7,8 @@
 
 识别器数据的下载地址：
 
-https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g
+1. ~[百度网盘](https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g)~
+1. https://drive.google.com/drive/folders/1GDCQyaHr36c7y1H-19pOKjc_EdAI1wn0
 
 `python3 main.py <img.jpg>`
 

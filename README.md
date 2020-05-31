@@ -44,20 +44,6 @@
 [0]          # 0 表示的就是打字机
 ```
 
-### 在线体验
-
-识别验证码，暂不识别多标签。
-
-http://shell.teachx.cn:12306/
-
-![a](https://user-images.githubusercontent.com/8620842/51885312-e809da00-23c5-11e9-93a3-78d5e8b4ac18.png)
-
-识别单个图片，可任意尺寸（总之由cv2简单的将其转为指定尺寸）。
-
-http://shell.teachx.cn:5000/
-
-![a](https://user-images.githubusercontent.com/8620842/51879603-21831b00-23af-11e9-8d16-9ae64866ca4c.jpg)
-
 ### 什么？
 
 只是想拿来识别12306的验证码？可以回顾[3.0.0](https://github.com/zhaipro/easy12306/tree/3.0.0)，使用相似图搜索。

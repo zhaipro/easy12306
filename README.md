@@ -7,7 +7,7 @@
 
 识别器数据的下载地址：
 
-1. ~[百度网盘](https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g)~
+1. [百度网盘](https://pan.baidu.com/s/1OsBIBM4rl8EnpZt7VYiD9g)
 1. https://drive.google.com/drive/folders/1GDCQyaHr36c7y1H-19pOKjc_EdAI1wn0
 
 `python3 main.py <img.jpg>`
@@ -57,3 +57,7 @@ http://shell.teachx.cn:12306/
 http://shell.teachx.cn:5000/
 
 ![a](https://user-images.githubusercontent.com/8620842/51879603-21831b00-23af-11e9-8d16-9ae64866ca4c.jpg)
+
+### 什么？
+
+只是想拿来识别12306的验证码？可以回顾[3.0.0](https://github.com/zhaipro/easy12306/tree/3.0.0)，使用相似图搜索。
